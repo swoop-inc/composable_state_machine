@@ -1,8 +1,10 @@
-# ComposableStateMachine &nbsp; [![Build Status](https://secure.travis-ci.org/swoop-inc/composable_state_machine.png)](http://travis-ci.org/swoop-inc/composable_state_machine?branch=master) [![Dependency Status](https://gemnasium.com/swoop-inc/composable_state_machine.png)](https://gemnasium.com/swoop-inc/composable_state_machine)
+# composable\_state_machine
+
+[![Build Status](https://secure.travis-ci.org/swoop-inc/composable_state_machine.png)](http://travis-ci.org/swoop-inc/composable_state_machine?branch=master) [![Dependency Status](https://gemnasium.com/swoop-inc/composable_state_machine.png)](https://gemnasium.com/swoop-inc/composable_state_machine) [![Code Climate](https://codeclimate.com/repos/526dee6b13d63752bd00675f/badges/22a2593672eb1f0f07e0/gpa.png)](https://codeclimate.com/repos/526dee6b13d63752bd00675f/feed)
 
 Would you like lots of DSL sugar with a bloated state machine implementation that can only be used with ActiveRecord? If so, this is not the gem for you. If you are looking for a simple, flexible and easy to use, extend & debug state machine implementation then look no further.
 
-Here are dozen reasons to give composable\_state_machine a try:
+Here are a dozen reasons to give composable\_state_machine a try:
 
 1. Have as many state machines per object as you need.
 1. Use whichever field/attribute/variable you want to store the machine's state.
@@ -45,17 +47,17 @@ $ gem install composable_state_machine
 
 There are many examples in the tests, especially in `spec/integration`. Another easy way to explore is to run `rake console`. This will start an IRB session with the gem preloaded. That's how all the examples below were generated.
 
-Before we begin, here is the big picture (skip ahead if you want the [actual picture](#design-implementation)):
+Before we begin, here is the big picture (skip ahead if you want the [actual picture](#design--implementation)):
 
-- A state Machine maintains its own state.
-- A machine's behavior is controlled by its Model, which specifies:
-    - The valid Transitions in the state machine.
-    - The Behaviors exhibited during operation.
+- A state [Machine](https://github.com/swoop-inc/composable_state_machine/blob/master/lib/composable_state_machine/machine.rb) maintains its own state.
+- A machine's behavior is controlled by its [Model](https://github.com/swoop-inc/composable_state_machine/blob/master/lib/composable_state_machine/model.rb), which specifies:
+    - The valid [Transitions](https://github.com/swoop-inc/composable_state_machine/blob/master/lib/composable_state_machine/transitions.rb) in the state machine.
+    - The [Behaviors](https://github.com/swoop-inc/composable_state_machine/blob/master/lib/composable_state_machine/behaviors.rb) exhibited during operation.
     - The default initial state.
-- For every type of behavior, a model can include Callbacks.
+- For every type of behavior, a model can include [Callbacks](https://github.com/swoop-inc/composable_state_machine/blob/master/lib/composable_state_machine/callbacks.rb).
 - Which callback is executed depends on the state the machine is in.
-- Callbacks are executed in the right context for each machine instance by a CallbackRunner.
-- Models have a DefaultCallbackRunner.
+- Callbacks are executed in the right context for each machine instance by a [CallbackRunner](https://github.com/swoop-inc/composable_state_machine/blob/master/lib/composable_state_machine/callback_runner.rb).
+- Models have a [DefaultCallbackRunner](https://github.com/swoop-inc/composable_state_machine/blob/master/lib/composable_state_machine/default_callback_runner.rb).
 
 That's all you need to know to do some pretty cool things with this gem.
 
@@ -84,7 +86,7 @@ bob.state
 
 ### External state management
 
-This example shows how you can choose where to store the state of a machine. It's also a great example of processing state change notifications. The power here comes from MachineWithExternalState which takes two procs/methods, one for reading the state and the other for updating the state.
+This example shows how you can choose where to store the state of a machine. It's also a great example of processing state change notifications. The power here comes from [MachineWithExternalState](https://github.com/swoop-inc/composable_state_machine/blob/master/lib/composable_state_machine/machine_with_external_state.rb) which takes two procs/methods, one for reading the state and the other for updating the state.
 
 ```ruby
 class Room
@@ -138,7 +140,7 @@ There is a special state called `:any`. Callbacks registered for the :any trigge
 
 Callbacks here are more powerful than in other state machine implementations we have encountered. They receive the original state, the event causing the transition and the state the machine is transitioning to. In addition, events can be triggered with any number of optional arguments, which are passed to callbacks.
 
-Callbacks are executed by callback runners. The default callback runner, the unsurprisingly named DefaultCallbackRunner, simply calls a callback's `call` method, which will use the value of `self` from the binding where the callback was defined. If you want to define your state machine models once and then use them across object instances, which is a really good idea, then you need the callbacks to use the object instance as `self`. To do this, mix in `CallbackRunner` and pass the object instance as the callback runner, as shown in this example.
+Callbacks are executed by callback runners. The default callback runner, the unsurprisingly named DefaultCallbackRunner, simply calls a callback's `call` method, which will use the value of `self` from the binding where the callback was defined. If you want to define your state machine models once and then use them across object instances, which is a really good idea, then you need the callbacks to use the object instance as `self`. To do this, mix in CallbackRunner and pass the object instance as the callback runner, as shown in this example.
 
 ```ruby
 class Person
@@ -158,7 +160,8 @@ class Person
                   proc { puts "  You got a raw deal, #{@name}..." },
               ],
               any: proc { |current_state, event, new_state|
-                puts "  Going from #{current_state.inspect} to #{new_state.inspect} due to a #{event.inspect} event"
+                puts "  Going from #{current_state.inspect} to #{new_state.inspect} " \
+                     " due to a #{event.inspect} event"
               }
           }
       }
@@ -259,13 +262,10 @@ transitions = ComposableStateMachine::Transitions.new.
       on(:hire, fired: :hired).
       on(:leave, hired: :departed).
       on(:fire, hired: :fired)
- => #<ComposableStateMachine::Transitions:0x007f87bb895d88 @transitions_for={:hire=>{:candidate=>:hired, :departed=>:hired, :fired=>:hired}, :leave=>{:hired=>:departed}, :fire=>{:hired=>:fired}}>
 transitions.events.sort
  => [:fire, :hire, :leave]
 transitions.states.sort
  => [:candidate, :departed, :fired, :hired]
-model = ComposableStateMachine.model(transitions: transitions)
- => #<ComposableStateMachine::Model:0x007f87bd3f6438 @initial_state=nil, @transitions=#<ComposableStateMachine::Transitions:0x007f87bb895d88 @transitions_for={:hire=>{:candidate=>:hired, :departed=>:hired, :fired=>:hired}, :leave=>{:hired=>:departed}, :fire=>{:hired=>:fired}}>, @behaviors=#<ComposableStateMachine::Behaviors:0x007f87bd3f6528 @callbacks_factory=ComposableStateMachine::Callbacks, @behaviors={}>, @callback_runner=ComposableStateMachine::DefaultCallbackRunner>
 ```
 
 ### Behaviors & callbacks
@@ -276,17 +276,14 @@ By the same token, you can have finer-grained control over configuring behaviors
 leave_callbacks = ComposableStateMachine::Callbacks.new.
       on(:candidate, proc { puts 'You will love it here!' }).
       on(:hired, proc { puts 'Sorry to see you go.' })
- => #<ComposableStateMachine::Callbacks:0x007f8a37ac7b78 @callbacks={:candidate=>[#<Proc:0x007f8a37ac79c0@(irb):2>], :hired=>[#<Proc:0x007f8a37ac78f8@(irb):3>]}>
 custom_callback_manager = lambda { |runner, trigger, *args|
     callback = choose_callback(trigger)
     runner.run_state_machine_callback(callback, *args)
 }
- => #<Proc:0x007f8a37a74838@(irb):5 (lambda)>
 behaviors = ComposableStateMachine::Behaviors.new.
       on(:enter, {hired: proc { puts 'Welcome!' }}).
       on(:leave, leave_callbacks).
       on(:event, custom_callback_manager)
- => #<ComposableStateMachine::Behaviors:0x007f8a379fecc8 @callbacks_factory=ComposableStateMachine::Callbacks, @behaviors={:enter=>#<ComposableStateMachine::Callbacks:0x007f8a379feb60 @callbacks={{:hired=>#<Proc:0x007f8a379febd8@(irb):11>}=>[nil]}>, :leave=>#<ComposableStateMachine::Callbacks:0x007f8a379fe9d0 @callbacks={#<ComposableStateMachine::Callbacks:0x007f8a37ac7b78 @callbacks={:candidate=>[#<Proc:0x007f8a37ac79c0@(irb):2>], :hired=>[#<Proc:0x007f8a37ac78f8@(irb):3>]}>=>[nil]}>, :event=>#<ComposableStateMachine::Callbacks:0x007f8a379fe868 @callbacks={#<Proc:0x007f8a37a74838@(irb):5 (lambda)>=>[nil]}>}>
 ```
 
 ## Design & implementation
@@ -319,7 +316,7 @@ Please don't change the version and add solid tests.
 
 [Michel Martens](https://github.com/soveran) for creating [micromachine](https://github.com/soveran/micromachine). composable\_state_machine came to life because extending micromachine without breaking backward compatibility turned out to be difficult.
 
-composable\_state_machine was written by [Simeon Simeonov](https://github.com/ssimeonov) and is maintained and funded by [Swoop, Inc.](http://swoop.com)
+composable\_state_machine was written by [Simeon Simeonov](https://github.com/ssimeonov) and is maintained & funded by [Swoop, Inc.](http://swoop.com)
 
 ![swoop](http://blog.swoop.com/Portals/160747/images/logo1.png)
 
