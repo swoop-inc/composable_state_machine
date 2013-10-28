@@ -1,0 +1,4 @@
+--asset assets:assets
+lib/**/*.rb
+-
+LICENSE.txt
