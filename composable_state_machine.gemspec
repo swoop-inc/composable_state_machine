@@ -25,7 +25,10 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'awesome_print'
   spec.add_development_dependency 'yard'
   spec.add_development_dependency 'redcarpet'
-  spec.add_development_dependency 'guard'
-  spec.add_development_dependency 'guard-rspec'
-  spec.add_development_dependency 'growl' if RUBY_PLATFORM =~ /darwin/
+
+  if RUBY_PLATFORM =~ /darwin/ && RUBY_VERSION =~ /^2/
+    spec.add_development_dependency 'guard'
+    spec.add_development_dependency 'guard-rspec'
+    spec.add_development_dependency 'growl'
+  end
 end
