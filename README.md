@@ -1,6 +1,10 @@
 # composable\_state_machine
 
-[![Build Status](https://secure.travis-ci.org/swoop-inc/composable_state_machine.png)](http://travis-ci.org/swoop-inc/composable_state_machine?branch=master) [![Dependency Status](https://gemnasium.com/swoop-inc/composable_state_machine.png)](https://gemnasium.com/swoop-inc/composable_state_machine) [![Code Climate](https://codeclimate.com/repos/526dee6b13d63752bd00675f/badges/22a2593672eb1f0f07e0/gpa.png)](https://codeclimate.com/repos/526dee6b13d63752bd00675f/feed)
+[![Gem Version](https://badge.fury.io/rb/composable_state_machine.png)](http://badge.fury.io/rb/composable_state_machine)
+[![Build Status](https://secure.travis-ci.org/swoop-inc/composable_state_machine.png)](http://travis-ci.org/swoop-inc/composable_state_machine?branch=master)
+[![Dependency Status](https://gemnasium.com/swoop-inc/composable_state_machine.png)](https://gemnasium.com/swoop-inc/composable_state_machine)
+[![Code Climate](https://codeclimate.com/repos/526dee6b13d63752bd00675f/badges/22a2593672eb1f0f07e0/gpa.png)](https://codeclimate.com/repos/526dee6b13d63752bd00675f/feed)
+[![Coverage Status](https://coveralls.io/repos/swoop-inc/composable_state_machine/badge.png)](https://coveralls.io/r/swoop-inc/composable_state_machine)
 
 Would you like lots of DSL sugar with a bloated state machine implementation that can only be used with ActiveRecord? If so, this is not the gem for you. If you are looking for a simple, flexible and easy to use, extend & debug state machine implementation then look no further.
 
