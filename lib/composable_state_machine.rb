@@ -1,5 +1,4 @@
-Dir['lib/composable_state_machine/**/*.rb'].each { |f| require File.expand_path(f) }
-
+Gem.find_files("composable_state_machine/**/*.rb").each { |path| require path }
 # @author {https://github.com/ssimeonov Simeon Simeonov}, {http://swoop.com Swoop, Inc.}
 #
 # For examples, see the {file:README.html README}.
