@@ -321,9 +321,6 @@ Please don't change the version and add solid tests.
 
 composable\_state_machine was written by [Simeon Simeonov](https://github.com/ssimeonov) and is maintained & funded by [Swoop, Inc.](http://swoop.com)
 
-![swoop](http://blog.swoop.com/Portals/160747/images/logo1.png)
-
-
 License
 -------
 
